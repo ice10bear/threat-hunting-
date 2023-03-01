@@ -1,0 +1,57 @@
+
+# Системы аутентификации и защиты от несанкционированного доступа
+
+Лабораторная работа №1
+
+## Цель
+
+Вывести информацию о системе
+
+## Исходные данные
+
+1.  ОС Windows 11
+
+2.  RStudio Desktop
+
+3.  WSL2
+
+4.  Интерпретатор языка R 4.2.2
+
+## План
+
+1.  Выполнить команду uname -r
+
+2.  Выполнить команду cat /proc/cpuinfo \| grep "model name"
+
+3.  Выполнить команду journalctl -q -b \| tail -n 30
+
+## Шаги
+
+1\. Сначала выполним команду uname -r для вывода информации о системе
+
+    uname -r
+
+    5.10.102.1-microsoft-standard-WSL2
+
+2\. Далее команда cat /proc/cpuinfo \| grep "model name" для вывода информации о процессоре, строки которой содержат "model name"
+
+    cat /proc/cpuinfo | grep "model name"
+
+    model name  : Intel(R) Core(TM) i5-8250U CPU @ 1.60GHz
+    model name  : Intel(R) Core(TM) i5-8250U CPU @ 1.60GHz
+    model name  : Intel(R) Core(TM) i5-8250U CPU @ 1.60GHz
+    model name  : Intel(R) Core(TM) i5-8250U CPU @ 1.60GHz
+    model name  : Intel(R) Core(TM) i5-8250U CPU @ 1.60GHz
+    model name  : Intel(R) Core(TM) i5-8250U CPU @ 1.60GHz
+    model name  : Intel(R) Core(TM) i5-8250U CPU @ 1.60GHz
+    model name  : Intel(R) Core(TM) i5-8250U CPU @ 1.60GHz
+
+3\. Также выполним команду journalctl -q -b \| tail -n 30 для вывода последних 30 строк логов
+
+## Оценка результата
+
+В результате лабораторной работы мы получили основную информацию об ОС, процессоре и логи системы.
+
+## Вывод
+
+Таким образом, мы научились работать с базовыми командами Linux и получать информацию об операционной системе.
