@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.269">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Emelyanenko M.">
+
+<title>Развертывание системы мониторинга ELK Stack (ElasticSearch)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="README_files/libs/clipboard/clipboard.min.js"></script>
+<script src="README_files/libs/quarto-html/quarto.js"></script>
+<script src="README_files/libs/quarto-html/popper.min.js"></script>
+<script src="README_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="README_files/libs/quarto-html/anchor.min.js"></script>
+<link href="README_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="README_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="README_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="README_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="README_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Развертывание системы мониторинга ELK Stack (ElasticSearch)</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Emelyanenko M. </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="цель" class="level2">
+<h2 class="anchored" data-anchor-id="цель">Цель</h2>
+<ol type="1">
+<li>Освоить базовые подходы централизованного сбора и накопления информации</li>
+<li>Освоить современные инструменты развертывания контейнирозованных приложений</li>
+<li>Закрепить знания о современных сетевых протоколах прикладного уровня</li>
+</ol>
+</section>
+<section id="исходные-данные" class="level2">
+<h2 class="anchored" data-anchor-id="исходные-данные">️Исходные данные</h2>
+<ol type="1">
+<li>Ноутбук с ОС Windows 10</li>
+<li>WSL2 с ОС Ubuntu 22.04</li>
+<li>Установленный и настроенный Docker</li>
+</ol>
+</section>
+<section id="задание" class="level2">
+<h2 class="anchored" data-anchor-id="задание">Задание</h2>
+<ol type="1">
+<li>Развернуть систему мониторинга на базе Elasticsearch
+<ul>
+<li>Elasticsearch</li>
+<li>Beats (Filebeat, Packetbeat)</li>
+<li>Elasticsearch Dashboards</li>
+</ul></li>
+<li>Настроить сбор информации о сетевом трафике</li>
+<li>Настроить сбор информации из файлов журналов (лог-файлов)</li>
+<li>Оформить отчет в соответствии с шаблоном</li>
+</ol>
+</section>
+<section id="ход-выполнения-практической-работы" class="level2">
+<h2 class="anchored" data-anchor-id="ход-выполнения-практической-работы">Ход выполнения практической работы</h2>
+<p>Развертывание Elasticsearch осуществлялось с помощью Docker.</p>
+<section id="пункт-1.-развернуть-систему-мониторинга-на-базе-elasticsearch" class="level3">
+<h3 class="anchored" data-anchor-id="пункт-1.-развернуть-систему-мониторинга-на-базе-elasticsearch">Пункт 1. Развернуть систему мониторинга на базе ElasticSearch</h3>
+<section id="шаг-1.-установка-и-настройка-elasticsearch-и-kibana-произведена-по-информации-с-сайтов" class="level4">
+<h4 class="anchored" data-anchor-id="шаг-1.-установка-и-настройка-elasticsearch-и-kibana-произведена-по-информации-с-сайтов">Шаг 1. Установка и настройка Elasticsearch и Kibana произведена по информации с сайтов:</h4>
+<p>https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html и https://serveradmin.ru/ustanovka-i-nastroyka-elasticsearch-logstash-kibana-elk-stack/</p>
+</section>
+<section id="шаг-2.-для-работы-elasticsearch-требуется-увеличить-размер-виртуальной-памяти-системы" class="level4">
+<h4 class="anchored" data-anchor-id="шаг-2.-для-работы-elasticsearch-требуется-увеличить-размер-виртуальной-памяти-системы">Шаг 2. Для работы ElasticSearch требуется увеличить размер виртуальной памяти системы:</h4>
+<pre><code>```
+sudo sysctl -w vm.max_map_count=262144
+```</code></pre>
+<p><img src="%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202023-05-26%20211734.png" class="img-fluid"></p>
+</section>
+<section id="шаг-3.-в-новой-директории-необходимо-создать-файл-.env-для-хранения-параметров-окружения" class="level4">
+<h4 class="anchored" data-anchor-id="шаг-3.-в-новой-директории-необходимо-создать-файл-.env-для-хранения-параметров-окружения">Шаг 3. В новой директории необходимо создать файл .env для хранения параметров окружения</h4>
+<pre><code>ELASTIC_PASSWORD=wK4e3hXlK.9UsN^f - пароль пользователя elastic
+
+KIBANA_PASSWORD=_ybsyD8ndurXzTknq - пароль пользователя kibana_system
+
+STACK_VERSION=8.7.1 - версия образов
+
+CLUSTER_NAME=docker-cluster - имя кластера
+
+LICENSE=basic - лицензия
+
+ES_PORT=9200 - порт elasticsearch
+
+KIBANA_PORT=5601 порт kibana
+
+MEM_LIMIT=1073741824 - лимит памяти</code></pre>
+</section>
+</section>
+<section id="пункт-2.-создание-docker-compose.yml" class="level3">
+<h3 class="anchored" data-anchor-id="пункт-2.-создание-docker-compose.yml">Пункт 2. Создание docker-compose.yml</h3>
+<section id="шаг-1.-в-файле-прописываем-параметры-elasticsearch-kibana-filebeat-packetbeat-nginx" class="level4">
+<h4 class="anchored" data-anchor-id="шаг-1.-в-файле-прописываем-параметры-elasticsearch-kibana-filebeat-packetbeat-nginx">Шаг 1. В файле прописываем параметры Elasticsearch, Kibana, Filebeat, Packetbeat, nginx</h4>
+<p>Настройки файла взяты с официального сайта elasticsearch: https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html</p>
+<pre class="()"><code># Password for the 'elastic' user (at least 6 characters)
+ELASTIC_PASSWORD=&lt;elastic&gt;
+
+# Password for the 'kibana_system' user (at least 6 characters)
+KIBANA_PASSWORD=&lt;kibana_system&gt;
+
+# Version of Elastic products
+STACK_VERSION=8.7.1
+
+# Set the cluster name
+CLUSTER_NAME=docker-cluster
+
+# Set to 'basic' or 'trial' to automatically start the 30-day trial
+LICENSE=basic
+#LICENSE=trial
+
+# Port to expose Elasticsearch HTTP API to the host
+ES_PORT=9200
+#ES_PORT=127.0.0.1:9200
+
+# Port to expose Kibana to the host
+KIBANA_PORT=5601
+#KIBANA_PORT=80
+
+# Increase or decrease based on the available host memory (in bytes)
+MEM_LIMIT=1073741824
+
+# Project namespace (defaults to the current folder name if not set)
+#COMPOSE_PROJECT_NAME=myproject</code></pre>
+</section>
+</section>
+<section id="шаг-3.-в-нашей-директории-создаем-файлы-filebeat.yml-и-packetbeat.yml" class="level3">
+<h3 class="anchored" data-anchor-id="шаг-3.-в-нашей-директории-создаем-файлы-filebeat.yml-и-packetbeat.yml">Шаг 3. В нашей директории создаем файлы filebeat.yml и packetbeat.yml</h3>
+<section id="файл-конфигурации-filebeat" class="level4">
+<h4 class="anchored" data-anchor-id="файл-конфигурации-filebeat">1. Файл конфигурации Filebeat</h4>
+<p>Взят из репозитория: https://github.com/elastic/beats/blob/main/filebeat/filebeat.yml</p>
+<pre class="()"><code>filebeat.inputs:
+- type: filestream
+  id: sys-logs
+  enabled: true
+  paths:
+    - /var/log/apt/*
+
+output.elasticsearch:
+  hosts: '${ELASTICSEARCH_HOSTS:elasticsearch:9200}'
+  username: '${ELASTICSEARCH_USERNAME:}'
+  password: '${ELASTICSEARCH_PASSWORD:}'
+  ssl:
+    certificate_authorities: "/usr/share/elasticsearch/config/certs/ca/ca.crt"
+    certificate: "/usr/share/elasticsearch/config/certs/filebeat/filebeat.crt"
+    key: "/usr/share/elasticsearch/config/certs/filebeat/filebeat.key"</code></pre>
+</section>
+<section id="файл-конфигурации-packetbeat" class="level4">
+<h4 class="anchored" data-anchor-id="файл-конфигурации-packetbeat">2. Файл конфигурации Packetbeat</h4>
+<p>Взят с сайта: https://raw.githubusercontent.com/elastic/beats/7.3/deploy/docker/packetbeat.docker.yml</p>
+<pre class="()"><code>packetbeat.interfaces.device: any
+
+packetbeat.flows:
+  timeout: 30s
+  period: 10s
+
+packetbeat.protocols.dns:
+  ports: [53]
+  include_authorities: true
+  include_additionals: true
+
+packetbeat.protocols.http:
+  ports: [80, 5601, 9200, 8080, 8081, 5000, 8002]
+
+packetbeat.protocols.memcache:
+  ports: [11211]
+
+packetbeat.protocols.mysql:
+  ports: [3306]
+
+packetbeat.protocols.pgsql:
+  ports: [5432]
+
+packetbeat.protocols.redis:
+  ports: [6379]
+
+packetbeat.protocols.thrift:
+  ports: [9090]
+
+packetbeat.protocols.mongodb:
+  ports: [27017]
+
+packetbeat.protocols.cassandra:
+  ports: [9042]
+
+processors:
+- add_cloud_metadata: ~
+
+output.elasticsearch:
+  hosts: '${ELASTICSEARCH_HOSTS:elasticsearch:9200}'
+  username: '${ELASTICSEARCH_USERNAME:}'
+  password: '${ELASTICSEARCH_PASSWORD:}'
+  ssl:
+    certificate_authorities: "/usr/share/elasticsearch/config/certs/ca/ca.crt"
+    certificate: "/usr/share/elasticsearch/config/certs/packetbeat/packetbeat.crt"
+    key: "/usr/share/elasticsearch/config/certs/packetbeat/packetbeat.key"</code></pre>
+</section>
+</section>
+<section id="шаг-4.-запуск-docker-compose" class="level3">
+<h3 class="anchored" data-anchor-id="шаг-4.-запуск-docker-compose">Шаг 4. Запуск docker-compose</h3>
+<pre class="()"><code>docker-compose up -d</code></pre>
+<pre><code>    Starting lab3_setup_1 ... 
+    Starting lab3_setup_1 ... done
+    Starting lab3_es_1    ... 
+    Starting lab3_es_1    ... done
+    Starting lab3_kibana_1 ... 
+    Starting filebeat      ... 
+    Starting packetbeat    ... 
+    Starting lab3_kibana_1 ... done
+    Starting packetbeat    ... done
+    Starting filebeat      ... done</code></pre>
+<p>Активные контейнеры:</p>
+<pre class="()"><code>docker ps</code></pre>
+<pre><code>    CONTAINER ID   IMAGE                      COMMAND                  CREATED         STATUS                                     PORTS                                                 NAMES
+    b96b06e0731c   elastic/filebeat:8.7.1     "/usr/bin/tini -- /u…"   3 minutes ago   Up Less than a second                                                                            filebeat
+    52a8d599bfc7   elastic/kibana:8.7.1       "/bin/tini -- /usr/l…"   3 minutes ago   Up Less than a second (health: starting)   0.0.0.0:5601-&gt;5601/tcp, :::5601-&gt;5601/tcp             lab3_kibana_1
+    a705591b03d0   elastic/packetbeat:8.7.1   "/usr/bin/tini -- /u…"   3 minutes ago   Up Less than a second                                                                            packetbeat
+    4c3d5dbe651b   elasticsearch:8.7.1        "/bin/tini -- /usr/l…"   3 minutes ago   Up 21 seconds (healthy)                    0.0.0.0:9200-&gt;9200/tcp, :::9200-&gt;9200/tcp, 9300/tcp   lab3_es_1
+    77f91b94432f   elasticsearch:8.7.1        "/bin/tini -- /usr/l…"   3 minutes ago   Up 22 seconds (healthy)                    9200/tcp, 9300/tcp                                    lab3_setup_1</code></pre>
+</section>
+<section id="этап-5.-welcome-to-elastic" class="level3">
+<h3 class="anchored" data-anchor-id="этап-5.-welcome-to-elastic">Этап 5. Welcome to Elastic</h3>
+<section id="шаг-1.-заходим-на-localhost5601-и-авторизируемся-через-пользователя-elastic" class="level4">
+<h4 class="anchored" data-anchor-id="шаг-1.-заходим-на-localhost5601-и-авторизируемся-через-пользователя-elastic">Шаг 1. Заходим на localhost:5601 и авторизируемся через пользователя elastic</h4>
+<p><img src="240691469-bd88c051-af51-4582-84f0-f7227ecb570b.png" class="img-fluid"></p>
+</section>
+<section id="шаг-2.-проверим-работоспособность-filebeat-и-packetbeat" class="level4">
+<h4 class="anchored" data-anchor-id="шаг-2.-проверим-работоспособность-filebeat-и-packetbeat">Шаг 2. Проверим работоспособность Filebeat и Packetbeat:</h4>
+<pre class="()"><code>GET _cat/indices</code></pre>
+<p><img src="image-86298026.png" class="img-fluid"></p>
+</section>
+<section id="шаг-3.-перейдём-в-раздел-discover-и-создадим-data-view-для-систем-сбора-информации" class="level4">
+<h4 class="anchored" data-anchor-id="шаг-3.-перейдём-в-раздел-discover-и-создадим-data-view-для-систем-сбора-информации">Шаг 3. Перейдём в раздел “Discover” и создадим Data View для систем сбора информации:</h4>
+<p><img src="data.png" class="img-fluid"></p>
+</section>
+<section id="шаг-4.-полученная-статистика" class="level4">
+<h4 class="anchored" data-anchor-id="шаг-4.-полученная-статистика">Шаг 4. Полученная статистика</h4>
+<p>Packetbeat:</p>
+<p><img src="image-136422464.png" class="img-fluid"></p>
+<p>Filebeat:</p>
+<p><img src="image-280596397.png" class="img-fluid"></p>
+</section>
+</section>
+</section>
+<section id="оценка-результата" class="level2">
+<h2 class="anchored" data-anchor-id="оценка-результата">Оценка результата</h2>
+<ul>
+<li><p>Была успешно развёрнута система мониторинга на базе Elasticsearch.</p></li>
+<li><p>Был настроен сбор информации из файлов журналов.</p></li>
+<li><p>Был настроен сбор информации о сетевом трафике.</p></li>
+</ul>
+</section>
+<section id="вывод" class="level2">
+<h2 class="anchored" data-anchor-id="вывод">Вывод</h2>
+<p>В результате лабораторной работы была освоена система контейнеризации приложений Docker, работа с Docker-compose и освоена система централизованного сбора и накопления информации ElasticSearch, а также были освоены базовые подходы централизованного сбора и накопления информации, современные инструменты развертывания контейнирозованных приложений и закреплены знания о современных сетевых протоколах прикладного уровня.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
