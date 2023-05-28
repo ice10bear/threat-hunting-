@@ -1,11 +1,3 @@
----
-title: "Развертывание Threat intelligence Platform OpenCTI"
-format: 
-    md:
-        output-file: README.md
-engine: knitr
----
-
 ## Цель
 
 1.  Освоить базовые подходы централизованного сбора и накопления информации
