@@ -1,3 +1,5 @@
+# Развертывание Threat intelligence Platform OpenCTI
+
 ## Цель работы
 
 1\. Освоить базовые подходы процессов Threat Intelligence
