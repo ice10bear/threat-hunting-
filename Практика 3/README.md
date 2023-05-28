@@ -32,11 +32,9 @@ https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html и h
 
 #### Шаг 2. Для работы ElasticSearch требуется увеличить размер виртуальной памяти системы:
 
-    ```
     sudo sysctl -w vm.max_map_count=262144
-    ```
+![image](https://github.com/ice10bear/threat-hunting-/assets/90779324/f42e2ad7-f69b-4a66-ab42-ece8369da128)
 
-![](%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202023-05-26%20211734.png)
 
 #### Шаг 3. В новой директории необходимо создать файл .env для хранения параметров окружения
 
@@ -205,7 +203,7 @@ docker ps
 
 #### Шаг 1. Заходим на localhost:5601 и авторизируемся через пользователя elastic
 
-![](240691469-bd88c051-af51-4582-84f0-f7227ecb570b.png)
+![image](https://github.com/ice10bear/threat-hunting-/assets/90779324/c0278470-268b-42a2-b6a0-5716aeb9b6d8)
 
 #### Шаг 2. Проверим работоспособность Filebeat и Packetbeat:
 
@@ -213,21 +211,21 @@ docker ps
 GET _cat/indices
 ```
 
-![](image-86298026.png)
+![image](https://github.com/ice10bear/threat-hunting-/assets/90779324/21cffb5a-1d8a-4807-949d-6c573e64c119)
 
 #### Шаг 3. Перейдём в раздел "Discover" и создадим Data View для систем сбора информации:
 
-![](data.png)
+![image](https://github.com/ice10bear/threat-hunting-/assets/90779324/4a3ade96-732a-4681-97e0-9bd070c743db)
 
 #### Шаг 4. Полученная статистика
 
 Packetbeat:
 
-![](image-136422464.png)
+![image](https://github.com/ice10bear/threat-hunting-/assets/90779324/bac3e891-2e3c-4eb8-86fe-370c8fe4b97d)
 
 Filebeat:
 
-![](image-280596397.png)
+![image](https://github.com/ice10bear/threat-hunting-/assets/90779324/1fa82333-aa10-4115-91d8-0c13b7f0c6bf)
 
 ## Оценка результата
 
