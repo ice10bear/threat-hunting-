@@ -14,7 +14,7 @@
 
 3\. Результат:
 
-![image](https://github.com/ice10bear/threat-hunting-/assets/90779324/e034520c-9911-422e-a4f0-23af83fa41e3)
+![image](https://github.com/ice10bear/threat-hunting-/assets/90779324/8b67e253-28e4-4e0f-bf30-f62f3d350bc4)
 
 
 ### Оценка результата
