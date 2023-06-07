@@ -1,0 +1,21 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    
+    - name: Build and test
+      run: |
+        # Здесь должны быть команды для сборки и тестирования вашего приложения
+    - name: Установка зависимостей
+      run: npm install  # или любая другая команда для установки зависимостей
+
